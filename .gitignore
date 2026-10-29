@@ -1,0 +1,3 @@
+petshop_dbt/target/
+petshop_dbt/logs/
+petshop_dbt/dbt_packages/

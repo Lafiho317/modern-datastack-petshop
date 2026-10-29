@@ -35,3 +35,18 @@ python data_generator.py
 ## Стек
 
 Python, Faker, Pandas, SQLAlchemy, Docker, PostgreSQL
+
+## ЛР №2: dbt (Transform)
+
+Папка `petshop_dbt/` містить dbt-проєкт.
+
+- `models/staging/` — очищення сирих даних (views): `stg_pet_owners` (дедуплікація, заміна NULL email), `stg_pet_supplies` (ціна >= 0), `stg_brands`, `stg_transactions`
+- `models/marts/` — схема «Зірка» (tables): `dim_pet_owners`, `dim_pet_supplies`, `fct_transactions` (з `total_amount`)
+
+Запуск:
+
+```bash
+cd petshop_dbt
+export DBT_PROFILES_DIR=.
+dbt run
+```

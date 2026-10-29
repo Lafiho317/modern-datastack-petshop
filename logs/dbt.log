@@ -1,0 +1,139 @@
+[0m12:44:44.323455 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f76a063d550>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f76a25ac910>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f769ee4f890>]}
+
+
+============================== 12:44:44.328068 | 3297ca2e-66f0-4de5-881b-ac6ce83bbcd5 ==============================
+[0m12:44:44.328068 [info ] [MainThread]: Running with dbt=1.13.0-b1
+[0m12:44:44.328930 [debug] [MainThread]: running dbt with arguments {'profiles_dir': '/home/kali/.dbt', 'introspect': 'True', 'version_check': 'True', 'hints_enabled': 'True', 'cache_selected_only': 'False', 'use_experimental_parser': 'False', 'indirect_selection': 'eager', 'partial_parse': 'True', 'log_format': 'default', 'use_colors': 'True', 'invocation_command': 'dbt init petshop_dbt --skip-profile-setup', 'maximum_seed_size_mib': '1', 'send_anonymous_usage_stats': 'True', 'static_parser': 'True', 'empty': 'None', 'write_json': 'True', 'log_cache_events': 'False', 'quiet': 'False', 'log_path': 'logs', 'target_path': 'None', 'debug': 'False', 'fail_fast': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'printer_width': '80', 'warn_error': 'None', 'no_print': 'None'}
+[0m12:44:44.329412 [debug] [MainThread]: Tracking: tracking
+[0m12:44:44.349636 [info ] [MainThread]: Creating dbt configuration folder at /home/kali/.dbt
+[0m12:44:44.352308 [debug] [MainThread]: Starter project path: /home/kali/modern-datastack-petshop/venv/lib/python3.14/site-packages/dbt/include/starter_project
+[0m12:44:44.357901 [info ] [MainThread]: Your new dbt project "petshop_dbt" was created!
+Initialized new project in /home/kali/modern-datastack-petshop/petshop_dbt/petshop_dbt
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m12:44:44.360411 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 0.17249796, "process_in_blocks": "1312", "process_kernel_time": 0.450254, "process_mem_max_rss": "120556", "process_out_blocks": "64", "process_user_time": 1.809059}
+[0m12:44:44.361175 [debug] [MainThread]: Command `dbt init` succeeded at 12:44:44.361017 after 0.17 seconds
+[0m12:44:44.361741 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f769f0c16e0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f769ee757f0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f769ee7d7b0>]}
+[0m12:44:44.362297 [debug] [MainThread]: Flushing usage events
+[0m12:44:45.390417 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m12:46:35.711258 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f74cd71d550>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f74cf54c910>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f74cbd2f890>]}
+
+
+============================== 12:46:35.715160 | 5b51b537-ce65-4c27-b8b4-8e03dfb271c4 ==============================
+[0m12:46:35.715160 [info ] [MainThread]: Running with dbt=1.13.0-b1
+[0m12:46:35.715923 [debug] [MainThread]: running dbt with arguments {'log_cache_events': 'False', 'log_path': 'logs', 'version_check': 'True', 'invocation_command': 'dbt init petshop_dbt', 'log_format': 'default', 'introspect': 'True', 'indirect_selection': 'eager', 'printer_width': '80', 'profiles_dir': '/home/kali/.dbt', 'cache_selected_only': 'False', 'use_colors': 'True', 'write_json': 'True', 'empty': 'None', 'static_parser': 'True', 'quiet': 'False', 'target_path': 'None', 'partial_parse': 'True', 'use_experimental_parser': 'False', 'debug': 'False', 'send_anonymous_usage_stats': 'True', 'maximum_seed_size_mib': '1', 'fail_fast': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'hints_enabled': 'True', 'warn_error': 'None', 'no_print': 'None'}
+[0m12:46:35.716399 [debug] [MainThread]: Tracking: tracking
+[0m12:46:35.729552 [info ] [MainThread]: A project called petshop_dbt already exists here.
+[0m12:46:35.731033 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 0.13365567, "process_in_blocks": "0", "process_kernel_time": 0.306399, "process_mem_max_rss": "120724", "process_out_blocks": "16", "process_user_time": 1.715041}
+[0m12:46:35.731754 [debug] [MainThread]: Command `dbt init` succeeded at 12:46:35.731571 after 0.13 seconds
+[0m12:46:35.732242 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f74cbfa16e0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f74cbd557f0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f74cbd5a580>]}
+[0m12:46:35.732835 [debug] [MainThread]: Flushing usage events
+[0m12:46:36.820770 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m12:47:33.363904 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f0c17719550>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f0c19550910>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f0c15d2f890>]}
+
+
+============================== 12:47:33.367536 | 49bdde52-01ee-44d7-8818-8b5fc0bcc41a ==============================
+[0m12:47:33.367536 [info ] [MainThread]: Running with dbt=1.13.0-b1
+[0m12:47:33.368268 [debug] [MainThread]: running dbt with arguments {'profiles_dir': '/home/kali/.dbt', 'invocation_command': 'dbt init petshop_dbt', 'cache_selected_only': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'log_format': 'default', 'version_check': 'True', 'log_path': 'logs', 'warn_error': 'None', 'printer_width': '80', 'log_cache_events': 'False', 'indirect_selection': 'eager', 'partial_parse': 'True', 'maximum_seed_size_mib': '1', 'fail_fast': 'False', 'send_anonymous_usage_stats': 'True', 'no_print': 'None', 'target_path': 'None', 'hints_enabled': 'True', 'introspect': 'True', 'use_experimental_parser': 'False', 'write_json': 'True', 'empty': 'None', 'static_parser': 'True', 'use_colors': 'True', 'quiet': 'False', 'debug': 'False'}
+[0m12:47:33.368756 [debug] [MainThread]: Tracking: tracking
+[0m12:47:33.380814 [debug] [MainThread]: Starter project path: /home/kali/modern-datastack-petshop/venv/lib/python3.14/site-packages/dbt/include/starter_project
+[0m12:47:33.384487 [info ] [MainThread]: Setting up your profile.
+[0m12:48:12.723091 [info ] [MainThread]: Profile petshop_dbt written to /home/kali/.dbt/profiles.yml using target's profile_template.yml and your supplied values.
+[0m12:48:12.725141 [info ] [MainThread]: Running dbt debug to validate the project...
+[0m12:48:12.725933 [info ] [MainThread]: dbt version: 1.13.0-b1
+[0m12:48:12.726460 [info ] [MainThread]: python version: 3.14.7
+[0m12:48:12.726966 [info ] [MainThread]: python path: /home/kali/modern-datastack-petshop/venv/bin/python3
+[0m12:48:12.727513 [info ] [MainThread]: os info: Linux-6.16.8+kali-amd64-x86_64-with-glibc2.43
+[0m12:48:12.764547 [info ] [MainThread]: Using profiles dir at /home/kali/.dbt
+[0m12:48:12.765198 [info ] [MainThread]: Using profiles.yml file at /home/kali/.dbt/profiles.yml
+[0m12:48:12.765746 [info ] [MainThread]: Using dbt_project.yml file at /home/kali/modern-datastack-petshop/petshop_dbt/dbt_project.yml
+[0m12:48:12.766545 [info ] [MainThread]: adapter type: postgres
+[0m12:48:12.767048 [info ] [MainThread]: adapter version: 1.11.0
+[0m12:48:12.925075 [info ] [MainThread]: Configuration:
+[0m12:48:12.925763 [info ] [MainThread]:   profiles.yml file [[32mOK found and valid[0m]
+[0m12:48:12.926258 [info ] [MainThread]:   dbt_project.yml file [[32mOK found and valid[0m]
+[0m12:48:12.926739 [info ] [MainThread]: Required dependencies:
+[0m12:48:12.927246 [debug] [MainThread]: Executing "git --help"
+[0m12:48:12.947841 [debug] [MainThread]: STDOUT: "b"usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]\n           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\n           [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--no-lazy-fetch]\n           [--no-optional-locks] [--no-advice] [--bare] [--git-dir=<path>]\n           [--work-tree=<path>] [--namespace=<name>] [--config-env=<name>=<envvar>]\n           <command> [<args>]\n\nThese are common Git commands used in various situations:\n\nstart a working area (see also: git help tutorial)\n   clone      Clone a repository into a new directory\n   init       Create an empty Git repository or reinitialize an existing one\n\nwork on the current change (see also: git help everyday)\n   add        Add file contents to the index\n   mv         Move or rename a file, a directory, or a symlink\n   restore    Restore working tree files\n   rm         Remove files from the working tree and from the index\n\nexamine the history and state (see also: git help revisions)\n   bisect     Use binary search to find the commit that introduced a bug\n   diff       Show changes between commits, commit and working tree, etc\n   grep       Print lines matching a pattern\n   log        Show commit logs\n   show       Show various types of objects\n   status     Show the working tree status\n\ngrow, mark and tweak your common history\n   backfill   Download missing objects in a partial clone\n   branch     List, create, or delete branches\n   commit     Record changes to the repository\n   merge      Join two or more development histories together\n   rebase     Reapply commits on top of another base tip\n   reset      Set `HEAD` or the index to a known state\n   switch     Switch branches\n   tag        Create, list, delete or verify tags\n\ncollaborate (see also: git help workflows)\n   fetch      Download objects and refs from another repository\n   pull       Fetch from and integrate with another repository or a local branch\n   push       Update remote refs along with associated objects\n\n'git help -a' and 'git help -g' list available subcommands and some\nconcept guides. See 'git help <command>' or 'git help <concept>'\nto read about a specific subcommand or concept.\nSee 'git help git' for an overview of the system.\n""
+[0m12:48:12.948464 [debug] [MainThread]: STDERR: "b''"
+[0m12:48:12.948957 [info ] [MainThread]:  - git [[32mOK found[0m]
+
+[0m12:48:12.949545 [info ] [MainThread]: Connection:
+[0m12:48:12.950070 [info ] [MainThread]:   host: 1
+[0m12:48:12.950562 [info ] [MainThread]:   port: 1
+[0m12:48:12.951044 [info ] [MainThread]:   user: 1
+[0m12:48:12.951582 [info ] [MainThread]:   database: 1
+[0m12:48:12.952068 [info ] [MainThread]:   schema: 1
+[0m12:48:12.952563 [info ] [MainThread]:   connect_timeout: 10
+[0m12:48:12.953065 [info ] [MainThread]:   role: None
+[0m12:48:12.953599 [info ] [MainThread]:   search_path: None
+[0m12:48:12.954143 [info ] [MainThread]:   keepalives_idle: 0
+[0m12:48:12.954682 [info ] [MainThread]:   sslmode: None
+[0m12:48:12.955258 [info ] [MainThread]:   sslcert: None
+[0m12:48:12.955806 [info ] [MainThread]:   sslkey: None
+[0m12:48:12.956412 [info ] [MainThread]:   sslrootcert: None
+[0m12:48:12.957048 [info ] [MainThread]:   application_name: dbt
+[0m12:48:12.957687 [info ] [MainThread]:   autocommit: False
+[0m12:48:12.958401 [info ] [MainThread]:   retries: 1
+[0m12:48:12.959268 [info ] [MainThread]: Registered adapter: postgres=1.11.0
+[0m12:48:13.107211 [debug] [MainThread]: Acquiring new postgres connection 'debug'
+[0m12:48:13.146457 [debug] [MainThread]: Using postgres connection "debug"
+[0m12:48:13.146978 [debug] [MainThread]: On debug: select 1 as id
+[0m12:48:13.147410 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m12:48:23.177777 [debug] [MainThread]: Postgres adapter: Got a retryable error when attempting to open a postgres connection.
+1 attempts remaining. Retrying in 0 seconds.
+Error:
+connection to server at "1" (0.0.0.1), port 1 failed: timeout expired
+
+[0m12:48:33.192557 [debug] [MainThread]: Postgres adapter: Error running SQL: select 1 as id
+[0m12:48:33.194313 [debug] [MainThread]: Postgres adapter: Rolling back transaction.
+[0m12:48:33.195768 [debug] [MainThread]: On debug: No close available on handle
+[0m12:48:33.197088 [info ] [MainThread]:   Connection test: [[31mERROR[0m]
+
+[0m12:48:33.198753 [info ] [MainThread]: [31m1 check failed:[0m
+[0m12:48:33.200289 [info ] [MainThread]: dbt was unable to connect to the specified database.
+The database returned the following error:
+
+  >Database Error
+  connection to server at "1" (0.0.0.1), port 1 failed: timeout expired
+  
+
+Check your database credentials and try again. For more information, visit:
+https://docs.getdbt.com/docs/configure-your-profile
+
+
+[0m12:48:33.202050 [info ] [MainThread]: Your new dbt project "petshop_dbt" was created!
+Initialized new project in /home/kali/modern-datastack-petshop/petshop_dbt/petshop_dbt
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m12:48:33.203614 [info ] [MainThread]: [31mYour profile may need adjustments. You can find the logs of `dbt debug` above[0m
+[0m12:48:33.207197 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 59.953194, "process_in_blocks": "2792", "process_kernel_time": 0.279819, "process_mem_max_rss": "135952", "process_out_blocks": "96", "process_user_time": 2.238554}
+[0m12:48:33.209081 [debug] [MainThread]: Command `dbt init` succeeded at 12:48:33.208666 after 59.96 seconds
+[0m12:48:33.210590 [debug] [MainThread]: Connection 'debug' was properly closed.
+[0m12:48:33.212004 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f0c15fa16e0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f0c177460f0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f0c153339b0>]}
+[0m12:48:33.213643 [debug] [MainThread]: Flushing usage events
+[0m12:48:34.442557 [debug] [MainThread]: An error was encountered while trying to flush usage events
