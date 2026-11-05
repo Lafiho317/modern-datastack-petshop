@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: raw_ecommerce
+    schema: raw
+    tables:
+      - name: pet_owners
+      - name: brands
+      - name: pet_supplies
+      - name: transactions
+      - name: loyalty_points
+      - name: reviews
