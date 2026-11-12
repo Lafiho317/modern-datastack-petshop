@@ -1,14 +1,15 @@
 # Modern Data Stack Pet Shop
 
-A small end-to-end data engineering project for a pet shop. The project demonstrates how raw business data can be generated, loaded into a PostgreSQL data warehouse, transformed into analytics-ready models with dbt, and orchestrated with Apache Airflow.
+An end-to-end Data Engineering coursework project for a pet shop. It demonstrates data generation, loading into a PostgreSQL data warehouse, transformation with dbt, data quality checks, and workflow orchestration with Apache Airflow.
 
 ## Project overview
 
-The pipeline follows an ELT approach:
+The project uses an ELT workflow:
 
-1. **Extract and load:** Python scripts generate sample pet shop data and load it into PostgreSQL.
-2. **Transform:** dbt prepares the raw data through staging models and analytical marts.
-3. **Orchestrate:** Apache Airflow runs the data generation/loading task first, then starts the dbt transformations.
+1. **Generate and load data:** Python scripts create sample pet shop datasets and load them into PostgreSQL.
+2. **Transform data:** dbt builds staging models and analytical marts.
+3. **Test data quality:** dbt tests check selected data quality rules.
+4. **Orchestrate the workflow:** Apache Airflow runs the tasks in the required order.
 
 ## Architecture
 
@@ -16,10 +17,10 @@ The pipeline follows an ELT approach:
 Python data generator
         |
         v
-Python loader
+PostgreSQL loader
         |
         v
-PostgreSQL (petshop_dwh)
+PostgreSQL: petshop_dwh
         |
         | raw schema
         v
@@ -28,14 +29,18 @@ dbt staging models
         v
 dbt analytical marts
         |
+        | analytics schema
         v
-analytics schema
+Analytical data
 
-Apache Airflow orchestrates the workflow:
+Apache Airflow DAG:
 extract_and_load_raw_data
         |
         v
 dbt_run_transformations
+        |
+        v
+dbt_test_task
 ```
 
 ## Technology stack
@@ -43,18 +48,18 @@ dbt_run_transformations
 | Technology | Purpose |
 |---|---|
 | Python | Generate and load sample data |
-| PostgreSQL 15 | Data warehouse |
-| Docker | Run the database and Airflow services |
-| Apache Airflow | Schedule and orchestrate pipeline tasks |
-| dbt Core | Transform raw data into analytical models |
+| PostgreSQL 15 | Store raw and transformed data |
+| Docker | Run the database and Airflow environment |
+| Apache Airflow 2.10.5 | Orchestrate the ELT workflow |
+| dbt Core | Transform data and run data quality tests |
 | dbt-postgres | Connect dbt to PostgreSQL |
 | SQL / Jinja | Define transformation logic |
 
-## Data model
+## Source datasets
 
-The generator creates the following sample datasets:
+The data generator creates the following datasets:
 
-| Dataset | Number of records |
+| Dataset | Records |
 |---|---:|
 | `pet_owners` | 50 |
 | `brands` | 10 |
@@ -63,36 +68,48 @@ The generator creates the following sample datasets:
 | `loyalty_points` | 500 |
 | `reviews` | 100 |
 
-Raw source tables are stored in the PostgreSQL `raw` schema. dbt builds the transformed models in the `analytics` schema.
+The source tables are stored in the PostgreSQL `raw` schema.
 
 ## dbt models
 
-The dbt project contains two layers:
+The dbt project contains two model layers.
 
-**Staging**
+### Staging
+
 - `stg_users`
 - `stg_orders`
 - `stg_products`
 
-These models prepare the source data for further analysis.
+Staging models prepare source data for further transformations.
 
-**Marts**
+### Marts
+
 - `dim_users`
 - `dim_products`
 - `fct_orders`
 
-These models form an analytical star-schema-style layer with dimensions and a fact table.
+The marts form an analytical layer based on a star-schema approach. The resulting models are stored in the `analytics` schema.
 
-## Airflow pipeline
+## Data quality tests
 
-The DAG is defined in `airflow/dags/ecommerce_pipeline.py`.
+The `stg_users` model has two tests for the `user_id` column:
 
-| Task | Operator | Responsibility |
+- `unique`: checks that identifiers are unique.
+- `not_null`: checks that identifiers do not contain NULL values.
+
+The tests are defined in `ecommerce_dbt/models/staging/schema.yml` and are executed with `dbt test`.
+
+## Airflow orchestration
+
+The DAG `ecommerce_elt_pipeline` is defined in `airflow/dags/ecommerce_pipeline.py`.
+
+| Task | Operator | Description |
 |---|---|---|
-| `extract_and_load_raw_data` | PythonOperator | Runs the data generator and PostgreSQL loader |
-| `dbt_run_transformations` | BashOperator | Runs `dbt run` for the dbt project |
+| `extract_and_load_raw_data` | PythonOperator | Generates sample data and loads it into PostgreSQL |
+| `dbt_run_transformations` | BashOperator | Runs dbt models with `dbt run` |
+| `dbt_test_task` | BashOperator | Runs data quality checks with `dbt test` |
 
-The task dependency ensures that dbt starts only after the raw data loading task succeeds. The DAG uses the `@daily` schedule and has catchup disabled. It can also be triggered manually from the Airflow web interface.
+The tasks run sequentially. Each task starts only after the previous task succeeds. The DAG is configured with a daily schedule (`@daily`) and `catchup=False`. It can also be triggered manually from the Airflow web interface.
 
 ## Project structure
 
@@ -107,57 +124,60 @@ modern-datastack-petshop/
 ├── ecommerce_dbt/
 │   ├── models/
 │   │   ├── staging/
+│   │   │   ├── src_ecommerce.yml
+│   │   │   ├── schema.yml
+│   │   │   ├── stg_users.sql
+│   │   │   ├── stg_orders.sql
+│   │   │   └── stg_products.sql
 │   │   └── marts/
+│   │       ├── dim_users.sql
+│   │       ├── dim_products.sql
+│   │       └── fct_orders.sql
 │   ├── dbt_project.yml
-│   └── profiles.yml       # local configuration; do not commit credentials
-├── data_generator.py
-├── load_to_dwh.py
+│   └── profiles.yml
 ├── docker-compose.yml
 ├── requirements.txt
 └── README.md
 ```
 
-## Getting started
+## Running the project
 
-### 1. Start PostgreSQL
+### Start PostgreSQL
 
-From the project root, start the database service:
+From the project root, run:
 
 ```bash
 docker compose up -d dwh_postgres
 ```
 
-The Compose configuration exposes PostgreSQL on port `5432`.
+### Run dbt manually
 
-### 2. Configure dbt
-
-Create or update `ecommerce_dbt/profiles.yml` for your environment. The profile should use the PostgreSQL connection details configured for your database. Keep local credentials out of version control.
-
-### 3. Run dbt manually
-
-With dbt Core and the PostgreSQL adapter installed, run:
+Configure `ecommerce_dbt/profiles.yml` for your local PostgreSQL connection, then run:
 
 ```bash
 dbt debug --project-dir ecommerce_dbt --profiles-dir ecommerce_dbt
 dbt run --project-dir ecommerce_dbt --profiles-dir ecommerce_dbt
+dbt test --project-dir ecommerce_dbt --profiles-dir ecommerce_dbt
 ```
 
-### 4. Run the Airflow pipeline
+### Run the Airflow pipeline
 
-Start the Airflow environment with the project DAG directory and dbt project available to the Airflow container. Ensure the container has the Python dependencies used by the scripts, the dbt Core and PostgreSQL adapter packages, and network access to PostgreSQL.
+Start the Airflow environment with the project DAGs, scripts, and dbt project mounted into the container. Open [http://localhost:8080](http://localhost:8080), locate `ecommerce_elt_pipeline`, and trigger it manually.
 
-Open [http://localhost:8080](http://localhost:8080), enable `ecommerce_elt_pipeline`, and trigger it manually. In the Airflow Grid or Graph view, check that both tasks complete successfully.
+## Execution result
+
+The updated DAG was executed successfully in the Airflow environment. All three tasks completed with the `success` state:
+
+- `extract_and_load_raw_data`
+- `dbt_run_transformations`
+- `dbt_test_task`
 
 ## Configuration notes
 
-- The database name used by the project is `petshop_dwh`.
-- The source schema is `raw`; the dbt output schema is `analytics`.
-- The dbt profile and database credentials are environment-specific and should remain local.
-- Airflow metadata, logs, PID files, and generated configuration files are excluded through `.gitignore`.
-
-## Project status
-
-The data generation/loading scripts, six dbt models, and Airflow orchestration DAG are implemented. The Airflow pipeline has been executed successfully with both tasks completing successfully.
+- Database: `petshop_dwh`
+- Raw source schema: `raw`
+- dbt output schema: `analytics`
+- Keep local database credentials in the local dbt profile and do not commit secrets.
 
 ---
 
