@@ -1,134 +1,164 @@
-# \# modern-datastack-petshop
+# Modern Data Stack Pet Shop
+
+A small end-to-end data engineering project for a pet shop. The project demonstrates how raw business data can be generated, loaded into a PostgreSQL data warehouse, transformed into analytics-ready models with dbt, and orchestrated with Apache Airflow.
+
+## Project overview
+
+The pipeline follows an ELT approach:
+
+1. **Extract and load:** Python scripts generate sample pet shop data and load it into PostgreSQL.
+2. **Transform:** dbt prepares the raw data through staging models and analytical marts.
+3. **Orchestrate:** Apache Airflow runs the data generation/loading task first, then starts the dbt transformations.
+
+## Architecture
+
+```text
+Python data generator
+        |
+        v
+Python loader
+        |
+        v
+PostgreSQL (petshop_dwh)
+        |
+        | raw schema
+        v
+dbt staging models
+        |
+        v
+dbt analytical marts
+        |
+        v
+analytics schema
+
+Apache Airflow orchestrates the workflow:
+extract_and_load_raw_data
+        |
+        v
+dbt_run_transformations
+```
 
-# 
+## Technology stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Generate and load sample data |
+| PostgreSQL 15 | Data warehouse |
+| Docker | Run the database and Airflow services |
+| Apache Airflow | Schedule and orchestrate pipeline tasks |
+| dbt Core | Transform raw data into analytical models |
+| dbt-postgres | Connect dbt to PostgreSQL |
+| SQL / Jinja | Define transformation logic |
 
-# Data Engineering project for a pet shop.
+## Data model
 
-# 
+The generator creates the following sample datasets:
 
-# \## Project description
+| Dataset | Number of records |
+|---|---:|
+| `pet_owners` | 50 |
+| `brands` | 10 |
+| `pet_supplies` | 100 |
+| `transactions` | 500 |
+| `loyalty_points` | 500 |
+| `reviews` | 100 |
 
-# 
+Raw source tables are stored in the PostgreSQL `raw` schema. dbt builds the transformed models in the `analytics` schema.
 
-# Проєкт призначений для збору, зберігання та обробки даних інтернет-магазину товарів для домашніх тварин. Для зберігання даних використовується PostgreSQL, а для їх перетворення та підготовки аналітичних моделей використовується dbt Core.
+## dbt models
 
-# 
+The dbt project contains two layers:
 
-# \## Technologies
+**Staging**
+- `stg_users`
+- `stg_orders`
+- `stg_products`
 
-# 
+These models prepare the source data for further analysis.
 
-# \- Python
+**Marts**
+- `dim_users`
+- `dim_products`
+- `fct_orders`
 
-# \- PostgreSQL 15
+These models form an analytical star-schema-style layer with dimensions and a fact table.
 
-# \- Docker
+## Airflow pipeline
 
-# \- dbt Core
+The DAG is defined in `airflow/dags/ecommerce_pipeline.py`.
 
-# \- dbt-postgres
+| Task | Operator | Responsibility |
+|---|---|---|
+| `extract_and_load_raw_data` | PythonOperator | Runs the data generator and PostgreSQL loader |
+| `dbt_run_transformations` | BashOperator | Runs `dbt run` for the dbt project |
 
-# \- SQL / Jinja
+The task dependency ensures that dbt starts only after the raw data loading task succeeds. The DAG uses the `@daily` schedule and has catchup disabled. It can also be triggered manually from the Airflow web interface.
 
-# 
+## Project structure
 
-# \## Project structure
+```text
+modern-datastack-petshop/
+├── airflow/
+│   └── dags/
+│       ├── ecommerce_pipeline.py
+│       └── scripts/
+│           ├── data_generator.py
+│           └── load_to_dwh.py
+├── ecommerce_dbt/
+│   ├── models/
+│   │   ├── staging/
+│   │   └── marts/
+│   ├── dbt_project.yml
+│   └── profiles.yml       # local configuration; do not commit credentials
+├── data_generator.py
+├── load_to_dwh.py
+├── docker-compose.yml
+├── requirements.txt
+└── README.md
+```
 
-# 
+## Getting started
 
-# ```text
+### 1. Start PostgreSQL
 
-# modern-datastack-petshop/
+From the project root, start the database service:
 
-# ├── data\_generator.py
+```bash
+docker compose up -d dwh_postgres
+```
 
-# ├── load\_to\_dwh.py
+The Compose configuration exposes PostgreSQL on port `5432`.
 
-# ├── docker-compose.yml
+### 2. Configure dbt
 
-# ├── requirements.txt
+Create or update `ecommerce_dbt/profiles.yml` for your environment. The profile should use the PostgreSQL connection details configured for your database. Keep local credentials out of version control.
 
-# ├── README.md
+### 3. Run dbt manually
 
-# └── ecommerce\_dbt/
+With dbt Core and the PostgreSQL adapter installed, run:
 
-# &#x20;   ├── models/
+```bash
+dbt debug --project-dir ecommerce_dbt --profiles-dir ecommerce_dbt
+dbt run --project-dir ecommerce_dbt --profiles-dir ecommerce_dbt
+```
 
-# &#x20;   │   ├── staging/
+### 4. Run the Airflow pipeline
 
-# &#x20;   │   │   ├── src\_ecommerce.yml
+Start the Airflow environment with the project DAG directory and dbt project available to the Airflow container. Ensure the container has the Python dependencies used by the scripts, the dbt Core and PostgreSQL adapter packages, and network access to PostgreSQL.
 
-# &#x20;   │   │   ├── stg\_users.sql
+Open [http://localhost:8080](http://localhost:8080), enable `ecommerce_elt_pipeline`, and trigger it manually. In the Airflow Grid or Graph view, check that both tasks complete successfully.
 
-# &#x20;   │   │   ├── stg\_orders.sql
+## Configuration notes
 
-# &#x20;   │   │   └── stg\_products.sql
+- The database name used by the project is `petshop_dwh`.
+- The source schema is `raw`; the dbt output schema is `analytics`.
+- The dbt profile and database credentials are environment-specific and should remain local.
+- Airflow metadata, logs, PID files, and generated configuration files are excluded through `.gitignore`.
 
-# &#x20;   │   └── marts/
+## Project status
 
-# &#x20;   │       ├── dim\_users.sql
+The data generation/loading scripts, six dbt models, and Airflow orchestration DAG are implemented. The Airflow pipeline has been executed successfully with both tasks completing successfully.
 
-# &#x20;   │       ├── dim\_products.sql
+---
 
-# &#x20;   │       └── fct\_orders.sql
-
-# &#x20;   ├── dbt\_project.yml
-
-# &#x20;   └── .gitignore
-
-# ```
-
-# 
-
-# \## Data transformation
-
-# 
-
-# Для обробки даних створено два рівні моделей:
-
-# 
-
-# \- \*\*Staging:\*\* підготовка та очищення початкових даних із таблиць PostgreSQL.
-
-# \- \*\*Marts:\*\* створення аналітичних таблиць за схемою «Зірка».
-
-# 
-
-# Створені моделі:
-
-# \- `stg\_users`, `stg\_orders`, `stg\_products`
-
-# \- `dim\_users`, `dim\_products`, `fct\_orders`
-
-# 
-
-# \## Database
-
-# 
-
-# Дані зберігаються в PostgreSQL у базі `petshop\_dwh`.
-
-# 
-
-# Початкові таблиці розміщені у схемі `raw`, результати перетворень dbt зберігаються у схемі `analytics`.
-
-# 
-
-# \## Running dbt
-
-# 
-
-# Для запуску моделей необхідно перейти до папки `ecommerce\_dbt`, налаштувати локальний `profiles.yml` та виконати:
-
-# 
-
-# ```bash
-
-# dbt debug
-
-# dbt run
-
-# ```
-
-
-
+Created as a Data Engineering coursework project.
