@@ -172,6 +172,8 @@ The updated DAG was executed successfully in the Airflow environment. All three 
 - `dbt_run_transformations`
 - `dbt_test_task`
 
+![Successful Airflow DAG execution](docs/airflow_dag_graph.png)
+
 ## Configuration notes
 
 - Database: `petshop_dwh`
