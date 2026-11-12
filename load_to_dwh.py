@@ -3,7 +3,7 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 
 engine = create_engine(
-    "postgresql+psycopg2://admin:adminpassword@localhost:5432/petshop_dwh"
+    "postgresql+psycopg2://admin:adminpassword@host.docker.internal:5432/petshop_dwh"
 )
 
 tables = [

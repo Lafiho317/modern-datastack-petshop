@@ -3,3 +3,12 @@ __pycache__/
 *.pyc
 .env
 logs/
+
+# Airflow generated files
+airflow/airflow.cfg
+airflow/airflow.db
+airflow/logs/
+airflow/webserver_config.py
+
+airflow/airflow-webserver.pid
+airflow/standalone_admin_password.txt
