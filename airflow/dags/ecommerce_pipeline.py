@@ -10,6 +10,7 @@ from airflow.operators.bash import BashOperator
 
 SCRIPTS_DIR = "/opt/airflow/dags/scripts"
 DBT_PROJECT_DIR = "/opt/airflow/ecommerce_dbt"
+DBT_EXECUTABLE = "/home/airflow/.local/bin/dbt"
 
 
 def extract_and_load_data():
@@ -50,9 +51,19 @@ with DAG(
     dbt_run_task = BashOperator(
         task_id="dbt_run_transformations",
         bash_command=(
-            f"/home/airflow/.local/bin/dbt run --project-dir {DBT_PROJECT_DIR} "
+            f"{DBT_EXECUTABLE} run "
+            f"--project-dir {DBT_PROJECT_DIR} "
             f"--profiles-dir {DBT_PROJECT_DIR}"
         ),
     )
 
-    extract_load_task >> dbt_run_task
+    dbt_test_task = BashOperator(
+        task_id="dbt_test_task",
+        bash_command=(
+            f"{DBT_EXECUTABLE} test "
+            f"--project-dir {DBT_PROJECT_DIR} "
+            f"--profiles-dir {DBT_PROJECT_DIR}"
+        ),
+    )
+
+    extract_load_task >> dbt_run_task >> dbt_test_task
