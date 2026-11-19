@@ -1,0 +1,22 @@
+
+version: 2
+
+models:
+  - name: dim_users
+    description: "Вимір користувачів зоомагазину, що містить інформацію про власників домашніх тварин."
+
+  - name: dim_products
+    description: "Вимір товарів зоомагазину, що містить інформацію про доступну продукцію."
+
+  - name: fct_orders
+    description: "Таблиця фактів, що містить історію замовлень з прив'язкою до користувачів та товарів."
+    columns:
+      - name: order_id
+        description: "Унікальний ідентифікатор замовлення."
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: "Ідентифікатор користувача, який здійснив замовлення."
+      - name: created_at
+        description: "Дата та час створення замовлення."
