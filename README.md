@@ -1,65 +1,72 @@
 # Modern Data Stack Pet Shop
 
-An end-to-end Data Engineering coursework project for a pet shop. It demonstrates data generation, loading into a PostgreSQL data warehouse, transformation with dbt, data quality checks, and workflow orchestration with Apache Airflow.
+Навчальний проєкт з інженерії даних для зоомагазину. Проєкт демонструє повний ELT-процес: генерацію тестових даних, завантаження до сховища PostgreSQL, трансформацію за допомогою dbt, перевірку якості даних, оркестрацію процесів через Apache Airflow та побудову аналітичних візуалізацій у Metabase.
 
-## Project overview
+## Огляд проєкту
 
-The project uses an ELT workflow:
+У проєкті реалізовано такий процес обробки даних:
 
-1. **Generate and load data:** Python scripts create sample pet shop datasets and load them into PostgreSQL.
-2. **Transform data:** dbt builds staging models and analytical marts.
-3. **Test data quality:** dbt tests check selected data quality rules.
-4. **Orchestrate the workflow:** Apache Airflow runs the tasks in the required order.
+1. **Генерація та завантаження даних.** Python-скрипти створюють тестові набори даних для зоомагазину та завантажують їх до PostgreSQL.
+2. **Зберігання сирих даних.** Початкові таблиці розміщуються у схемі `raw`.
+3. **Трансформація даних.** dbt створює staging-моделі та аналітичні таблиці.
+4. **Перевірка якості.** Тести dbt перевіряють коректність вибраних даних.
+5. **Оркестрація.** Apache Airflow керує послідовністю виконання етапів ELT.
+6. **Аналітика та візуалізація.** Metabase підключається до сховища даних і використовується для створення графіків на основі аналітичної схеми.
+7. **Документація та залежності.** dbt Docs генерує документацію моделей і граф Data Lineage.
 
-## Architecture
+## Архітектура
 
 ```text
-Python data generator
-        |
-        v
-PostgreSQL loader
-        |
-        v
+Python: генерація даних
+          |
+          v
+Python: завантаження даних
+          |
+          v
 PostgreSQL: petshop_dwh
-        |
-        | raw schema
-        v
-dbt staging models
-        |
-        v
-dbt analytical marts
-        |
-        | analytics schema
-        v
-Analytical data
+          |
+          | схема raw
+          v
+dbt: staging-моделі
+          |
+          v
+dbt: аналітичні моделі (marts)
+          |
+          | схема analytics
+          v
+Metabase: аналітичні графіки
 
-Apache Airflow DAG:
-extract_and_load_raw_data
-        |
-        v
-dbt_run_transformations
-        |
-        v
-dbt_test_task
+Apache Airflow:
+  extract_and_load_raw_data
+          |
+          v
+  dbt_run_transformations
+          |
+          v
+  dbt_test_task
+
+dbt Docs:
+  документація моделей та Data Lineage
 ```
 
-## Technology stack
+## Технологічний стек
 
-| Technology | Purpose |
+| Технологія | Призначення |
 |---|---|
-| Python | Generate and load sample data |
-| PostgreSQL 15 | Store raw and transformed data |
-| Docker | Run the database and Airflow environment |
-| Apache Airflow 2.10.5 | Orchestrate the ELT workflow |
-| dbt Core | Transform data and run data quality tests |
-| dbt-postgres | Connect dbt to PostgreSQL |
-| SQL / Jinja | Define transformation logic |
+| Python | Генерація та завантаження тестових даних |
+| PostgreSQL 15 | Зберігання сирих і трансформованих даних |
+| Docker та Docker Compose | Запуск сервісів у контейнерах |
+| Apache Airflow 2.10.5 | Оркестрація ELT-процесу |
+| dbt Core | Трансформація даних і перевірка їхньої якості |
+| dbt-postgres | Підключення dbt до PostgreSQL |
+| SQL та Jinja | Опис логіки трансформації |
+| Metabase | Створення аналітичних запитів і візуалізацій |
 
-## Source datasets
+## Початкові набори даних
 
-The data generator creates the following datasets:
+Генератор створює такі набори даних:
 
-| Dataset | Records |
+| Набір даних | Кількість записів |
 |---|---:|
 | `pet_owners` | 50 |
 | `brands` | 10 |
@@ -68,11 +75,11 @@ The data generator creates the following datasets:
 | `loyalty_points` | 500 |
 | `reviews` | 100 |
 
-The source tables are stored in the PostgreSQL `raw` schema.
+Початкові таблиці зберігаються у схемі PostgreSQL `raw`.
 
-## dbt models
+## Моделі dbt
 
-The dbt project contains two model layers.
+Проєкт dbt містить два рівні моделей.
 
 ### Staging
 
@@ -80,7 +87,7 @@ The dbt project contains two model layers.
 - `stg_orders`
 - `stg_products`
 
-Staging models prepare source data for further transformations.
+Staging-моделі підготовлюють початкові дані до подальшої обробки: вибирають потрібні поля та формують зручну структуру для аналітичного рівня.
 
 ### Marts
 
@@ -88,30 +95,55 @@ Staging models prepare source data for further transformations.
 - `dim_products`
 - `fct_orders`
 
-The marts form an analytical layer based on a star-schema approach. The resulting models are stored in the `analytics` schema.
+Аналітичний рівень побудований за підходом зіркової схеми. Виміри містять інформацію про користувачів і товари, а таблиця фактів містить дані про замовлення. Результати моделей зберігаються у схемі `analytics`.
 
-## Data quality tests
+## Перевірка якості даних
 
-The `stg_users` model has two tests for the `user_id` column:
+У проєкті налаштовано чотири тести dbt:
 
-- `unique`: checks that identifiers are unique.
-- `not_null`: checks that identifiers do not contain NULL values.
+- для `stg_users.user_id`: `unique` та `not_null`;
+- для `fct_orders.order_id`: `unique` та `not_null`.
 
-The tests are defined in `ecommerce_dbt/models/staging/schema.yml` and are executed with `dbt test`.
+Тести перевіряють унікальність ідентифікаторів та відсутність порожніх значень у ключових полях. Опис тестів розміщений у YAML-файлах моделей. Для запуску перевірок використовується команда `dbt test`.
 
-## Airflow orchestration
+## Оркестрація в Apache Airflow
 
-The DAG `ecommerce_elt_pipeline` is defined in `airflow/dags/ecommerce_pipeline.py`.
+DAG `ecommerce_elt_pipeline` описаний у файлі `airflow/dags/ecommerce_pipeline.py`.
 
-| Task | Operator | Description |
+| Завдання | Оператор | Призначення |
 |---|---|---|
-| `extract_and_load_raw_data` | PythonOperator | Generates sample data and loads it into PostgreSQL |
-| `dbt_run_transformations` | BashOperator | Runs dbt models with `dbt run` |
-| `dbt_test_task` | BashOperator | Runs data quality checks with `dbt test` |
+| `extract_and_load_raw_data` | PythonOperator | Генерує тестові дані та завантажує їх до PostgreSQL |
+| `dbt_run_transformations` | BashOperator | Запускає трансформації dbt командою `dbt run` |
+| `dbt_test_task` | BashOperator | Запускає перевірки якості даних командою `dbt test` |
 
-The tasks run sequentially. Each task starts only after the previous task succeeds. The DAG is configured with a daily schedule (`@daily`) and `catchup=False`. It can also be triggered manually from the Airflow web interface.
+Завдання виконуються послідовно: наступний етап починається після успішного завершення попереднього. DAG має щоденний розклад `@daily`, параметр `catchup=False), а також може запускатися вручну через вебінтерфейс Airflow.
 
-## Project structure
+## Аналітика у Metabase
+
+Metabase підключений до бази даних `petshop_dwh) і використовує аналітичну схему `analytics`. У ньому створено дві візуалізації:
+
+1. **Динаміка замовлень.** Лінійний графік кількості замовлень у часі з групуванням за місяцями.
+2. **Топ-5 користувачів за кількістю замовлень.** Стовпчаста діаграма, побудована на основі об'єднання таблиць `fct_orders` та `dim_users`. Результати впорядковані за кількістю замовлень у спадному порядку.
+
+Для запуску Metabase разом із PostgreSQL використовується сервіс `metabase` у файлі `docker-compose.yml). Вебінтерфейс Metabase доступний за адресою [http://localhost:3000](http://localhost:3000).
+
+## Документація dbt та Data Lineage
+
+Для генерації документації використовується команда:
+
+```bash
+dbt docs generate
+```
+
+Для перегляду документації запускається локальний сервер:
+
+```bash
+dbt docs serve --port 8081
+```
+
+Після запуску документація доступна за адресою [http://localhost:8081](http://localhost:8081). У розділі Data Lineage можна переглянути залежності між джерелами даних, staging-моделями та аналітичними моделями marts.
+
+## Структура проєкту
 
 ```text
 modern-datastack-petshop/
@@ -130,29 +162,40 @@ modern-datastack-petshop/
 │   │   │   ├── stg_orders.sql
 │   │   │   └── stg_products.sql
 │   │   └── marts/
+│   │       ├── schema.yml
 │   │       ├── dim_users.sql
 │   │       ├── dim_products.sql
 │   │       └── fct_orders.sql
 │   ├── dbt_project.yml
 │   └── profiles.yml
+├── docs/
+│   └── airflow_dag_graph.png
 ├── docker-compose.yml
 ├── requirements.txt
 └── README.md
 ```
 
-## Running the project
+## Запуск проєкту
 
-### Start PostgreSQL
+### Запуск PostgreSQL та Metabase
 
-From the project root, run:
+З кореневої папки проєкту виконайте:
 
 ```bash
-docker compose up -d dwh_postgres
+docker compose up -d dwh_postgres metabase
 ```
 
-### Run dbt manually
+Після запуску:
+- PostgreSQL доступний на порту `5432);
+- Metabase доступний за адресою [http://localhost:3000](http://localhost:3000).
 
-Configure `ecommerce_dbt/profiles.yml` for your local PostgreSQL connection, then run:
+Під час першого запуску Metabase потрібно пройти початкове налаштування та додати підключення PostgreSQL. Якщо Metabase працює в Docker Compose в одній мережі з базою, як адресу хоста потрібно вказати `dwh_postgres), порт `5432) і назву бази `petshop_dwh).
+
+### Запуск dbt
+
+Перед запуском налаштуйте локальний файл `ecommerce_dbt/profiles.yml` відповідно до свого середовища. Якщо dbt запускається безпосередньо у Windows, а PostgreSQL опублікований на локальний порт `5432), як адресу хоста можна використовувати `localhost`.
+
+З активованим Python virtual environment виконайте з кореневої папки проєкту:
 
 ```bash
 dbt debug --project-dir ecommerce_dbt --profiles-dir ecommerce_dbt
@@ -160,27 +203,41 @@ dbt run --project-dir ecommerce_dbt --profiles-dir ecommerce_dbt
 dbt test --project-dir ecommerce_dbt --profiles-dir ecommerce_dbt
 ```
 
-### Run the Airflow pipeline
+Для генерації та перегляду документації перейдіть до папки `ecommerce_dbt` і виконайте:
 
-Start the Airflow environment with the project DAGs, scripts, and dbt project mounted into the container. Open [http://localhost:8080](http://localhost:8080), locate `ecommerce_elt_pipeline`, and trigger it manually.
+```bash
+dbt docs generate
+dbt docs serve --port 8081
+```
 
-## Execution result
+### Запуск конвеєра Airflow
 
-The updated DAG was executed successfully in the Airflow environment. All three tasks completed with the `success` state:
+Запустіть середовище Airflow з підключеними DAG, скриптами та проєктом dbt. Вебінтерфейс Airflow доступний за адресою [http://localhost:8080](http://localhost:8080). Знайдіть DAG `ecommerce_elt_pipeline` і запустіть його вручну.
 
-- `extract_and_load_raw_data`
-- `dbt_run_transformations`
-- `dbt_test_task`
+## Результати виконання
 
-![Successful Airflow DAG execution](docs/airflow_dag_graph.png)
+DAG було успішно виконано в середовищі Airflow. Усі три завдання завершилися зі статусом `success`:
 
-## Configuration notes
+- `extract_and_load_raw_data`;
+- `dbt_run_transformations`;
+- `dbt_test_task`.
 
-- Database: `petshop_dwh`
-- Raw source schema: `raw`
-- dbt output schema: `analytics`
-- Keep local database credentials in the local dbt profile and do not commit secrets.
+![Успішне виконання DAG в Apache Airflow](docs/airflow_dag_graph.png)
+
+У Metabase створено два аналітичні графіки: динаміку замовлень за місяцями та топ-5 користувачів за кількістю замовлень. Документацію dbt згенеровано, граф Data Lineage доступний у розділі DAG.
+
+## Основні параметри конфігурації
+
+- Назва бази даних: `petshop_dwh`.
+- Схема початкових даних: `raw`.
+- Схема аналітичних моделей: `analytics`.
+- Порт PostgreSQL: `5432`.
+- Порт Metabase: `3000).
+- Порт Airflow: `8080) (за умови відповідної конфігурації середовища).
+- Порт сервера документації dbt у наведеній команді: `8081).
+
+Локальні облікові дані та паролі не слід зберігати у відкритому вигляді в репозиторії. Для власного запуску використовуйте локальні налаштування підключення.
 
 ---
 
-Created as a Data Engineering coursework project.
+Навчальний проєкт з інженерії даних, присвячений побудові сучасного стека обробки та аналітики даних для зоомагазину.
